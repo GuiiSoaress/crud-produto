@@ -46,4 +46,39 @@ public class ProdutoDAO {
         return produtos;
 
     }
+
+    // --------------------------------------------
+    // READ BY id
+    // -------------------------------------------
+
+    public Produto buscarPorId(Long id){
+        
+        Produto produto = null;
+        
+        String sql = "SELECT id, nome, preco, estoque FROM produtos WHERE id = ?";
+
+        try (
+            Connection conn = ConnectionFactory.getConnection(); 
+            PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.setLong(1, id);
+            
+            try(ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    produto = new Produto(
+                        rs.getLong("id"),
+                        rs.getString("nome"),
+                        rs.getDouble("preco"),
+                        rs.getInt("estoque")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+           System.out.println("Erro ao buscar produto. ID: " + id);
+           System.out.println(e.getMessage());
+           e.printStackTrace();
+        }
+
+        return produto;
+    }
 }
