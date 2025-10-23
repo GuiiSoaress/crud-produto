@@ -9,9 +9,11 @@ public class Produto {
 
     // Construtores (vazio, sem o id, completo)
 
+    // para json
     public Produto() {
     }
-
+    
+    //sem o id (para inserções auto increment)
     public Produto(String nome, double preco, int estoque) {
         this.nome = nome;
         this.preco = preco;
