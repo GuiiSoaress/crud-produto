@@ -3,6 +3,7 @@ package api;
 import static spark.Spark.after;
 import static spark.Spark.get;
 import static spark.Spark.port;
+import static spark.Spark.post;
 
 import com.google.gson.Gson;
 
@@ -58,6 +59,28 @@ public class ApiProduto {
                     response.status(400);
                     return "{\"mensagem\": \"Id Invalido\"}";
                 }
+            }
+        });
+
+        // POST /produtos - Criar novo produto
+        post("/produtos", new Route() {
+            @Override
+            public Object handle(Request request, Response response){
+                try {
+                    Produto novoProduto = gson.fromJson(request.body(), Produto.class);
+                    dao.inserir(novoProduto);
+
+                    response.status(201);
+                    return gson.toJson(novoProduto);
+
+                } catch (Exception e) {
+                    response.status(500);
+                    System.out.println("Erro ao processar requisição post");
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                    return "{\"mensagem\": \"Erro ao cadastrar o produto\"}";
+                }
+                
             }
         });
 
