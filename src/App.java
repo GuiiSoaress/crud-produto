@@ -16,12 +16,42 @@ public class App {
         //instancia o objeto produto dao
         ProdutoDAO produtoDAO = new ProdutoDAO();
 
+
+        // Busca Lista de Produtos
         // //Itera sobre o retorno do produtoDAO (Lista de produtos)
         // for (Produto p : produtoDAO.buscarTodos()){
         //     System.out.println(p.toString());
         // }
 
-        System.out.println(produtoDAO.buscarPorId(2L).toString());
+
+        //Busca Produtos por id
+        // Produto produto = produtoDAO.buscarPorId(1L);
+        // if (produto != null){
+        //     System.out.println(produto.toString());
+        // }else{
+        //     System.out.println("Produto não encontrado");
+        // }
+        
+
+        // Inserir produto
+        Produto p1 = new Produto("Notebook", 2500.00, 2);
+        // produtoDAO.inserir(p1);
+
+        //atualizar produto
+        // Produto produtoParaAtualizar = produtoDAO.buscarPorId(3L);
+        //     if (produtoParaAtualizar != null) {
+        //         produtoParaAtualizar.setNome("Teclado Gamer Atualizado");
+        //         produtoParaAtualizar.setPreco(249.99);
+        //         produtoParaAtualizar.setEstoque(30);
+        //         produtoDAO.atualizar(produtoParaAtualizar);
+        //         System.out.println("Produto atualizado: " + produtoParaAtualizar);
+        //     } else {
+        //         System.out.println("Produto para atualização não encontrado.");
+        //     }   
+
+        //deletar produto
+        produtoDAO.deletar(3L);
+
 
     }
 }

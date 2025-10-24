@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mysql.cj.xdevapi.Schema.CreateCollectionOptions;
 
 import model.Produto;
 import util.ConnectionFactory;
@@ -80,5 +83,89 @@ public class ProdutoDAO {
         }
 
         return produto;
+    }
+
+    // ------------------------------------
+    // CREATE
+    // ------------------------------------
+
+    public void inserir(Produto produto){
+
+        String sql = "INSERT INTO produtos(nome, preco, estoque) VALUES (?,?,?)";
+
+        try (
+            Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            stmt.setString(1, produto.getNome());
+            stmt.setDouble(2, produto.getPreco());
+            stmt.setInt(3, produto.getEstoque());
+            
+            stmt.executeUpdate();
+
+            try(ResultSet rs = stmt.getGeneratedKeys()){
+                if(rs.next()){
+                    produto.setId(rs.getLong(1));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir produto: " + produto.getNome());
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+     // ------------------------------------
+    // Update
+    // ------------------------------------
+
+    public void atualizar(Produto produto){
+
+        String sql = "update produtos SET nome = ?, preco = ?, estoque = ? WHERE id = ?";
+
+        try (
+            Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setString(1, produto.getNome());
+            stmt.setDouble(2, produto.getPreco());
+            stmt.setInt(3, produto.getEstoque());
+            stmt.setLong(4, produto.getId());
+            
+            int linhasAfetadas = stmt.executeUpdate();
+            System.out.println("Produto iD: " + produto.getId() + " Atualizado");
+            System.out.println("Linhas afetadas: " + linhasAfetadas);
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar o produto: " + produto.getNome());
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // -----------------------------------------------------------
+    // DELETE 
+    // -----------------------------------------------------------
+
+    public void deletar(Long id){
+        String sql = "DELETE FROM produtos WHERE id = ?";
+
+        try (
+            Connection conn = ConnectionFactory.getConnection(); 
+            PreparedStatement stmt = conn.prepareStatement(sql)  
+        ) {
+           stmt.setLong(1, id);
+            
+           int linhasAfetadas = stmt.executeUpdate();
+           System.out.println("Produto Excluido");
+           System.out.println("Linhas afetadas: " + linhasAfetadas);
+        
+        } catch (SQLException e) {
+            System.out.println("Erro ao excluir o produto ID: " + id);
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 }
