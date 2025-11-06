@@ -14,7 +14,7 @@ public class ConnectionFactory {
     public static Connection getConnection(){
         try {
             Class.forName(DRIVER);
-            System.out.println("Tentando conectar ao banco de dados ...");
+            System.out.println("Conectando ao banco de dados ...");
             return DriverManager.getConnection(URL, USER, PASS);
         } catch (ClassNotFoundException e) {
             System.out.println("Driver JDBC não  encontrado");

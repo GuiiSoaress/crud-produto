@@ -1,9 +1,11 @@
 package api;
 
 import static spark.Spark.after;
+import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
+import static spark.Spark.put;
 
 import com.google.gson.Gson;
 
@@ -83,6 +85,64 @@ public class ApiProduto {
                 
             }
         });
+
+                // PUT /produtos/:id - Atualizar produto existente
+        put("/produtos/:id", new Route() {
+            @Override
+            public Object handle(Request request, Response response) {
+                try {
+                    Long id = Long.parseLong(request.params(":id")); // Usa Long
+
+                    if (dao.buscarPorId(id) == null) {
+                        response.status(404);
+                        return "{\"mensagem\": \"Produto não encontrado para atualização.\"}";
+                    }
+
+                    Produto produtoParaAtualizar = gson.fromJson(request.body(), Produto.class);
+                    produtoParaAtualizar.setId(id); // garante que o ID da URL seja usado
+
+                    dao.atualizar(produtoParaAtualizar);
+
+                    response.status(200); // OK
+                    return gson.toJson(produtoParaAtualizar);
+
+                } catch (NumberFormatException e) {
+                    response.status(400); // Bad Request
+                    return "{\"mensagem\": \"Formato de ID inválido.\"}";
+                } catch (Exception e) {
+                    response.status(500);
+                    System.err.println("Erro ao processar requisição PUT: " + e.getMessage());
+                    e.printStackTrace();
+                    return "{\"mensagem\": \"Erro ao atualizar produto.\"}";
+                }
+            }
+        });
+
+        // DELETE /produtos/:id - Deletar um produto
+        delete("/produtos/:id", new Route() {
+            @Override
+            public Object handle(Request request, Response response) {
+                try {
+                    Long id = Long.parseLong(request.params(":id")); // Usa Long
+
+                    if (dao.buscarPorId(id) == null) {
+                        response.status(404);
+                        return "{\"mensagem\": \"Produto não encontrado para exclusão.\"}";
+                    }
+
+                    dao.deletar(id); // Usa o Long ID
+
+                    response.status(204); // No Content
+                    return ""; // Corpo vazio
+
+                } catch (NumberFormatException e) {
+                    response.status(400);
+                    return "{\"mensagem\": \"Formato de ID inválido.\"}";
+                }
+            }
+        });
+
+        System.out.println("API de Produtos iniciada na porta 4567. Acesse: http://localhost:4567/produtos");
 
     }
 
